@@ -2,6 +2,7 @@ import express from 'express';
 import { User } from '../models/user.model';
 import { Character } from '../types/character.type';
 import { Item } from '../types/item.type';
+import { CHARACTERS } from '../constants/characters';
 
 class CharacterController {
   public path = '/characters';
@@ -58,7 +59,19 @@ class CharacterController {
       return res.status(404).send({ message: 'NOT_FOUND' });
     }
 
-    return res.status(201).send({ message: 'CREATED' });
+    const existingCharacter: Character = existingUser.characters.find(character => character.id === id);
+
+    const character: Character | undefined = CHARACTERS.find(character => character.id === id);
+
+    if (!existingCharacter && character) {
+      existingUser.characters = [ ...existingUser.characters, character];
+
+      existingUser.save();
+
+      return res.status(201).send({ message: 'CREATED' });
+    }
+
+    return res.status(400).send({ message: !character ? 'OPTION_NOT_FOUND' : 'ALREADY_CREATED' });
   }
 
   updateCharacter = async (req: express.Request<{ id: string, items: string[] }>, res: express.Response) => {
