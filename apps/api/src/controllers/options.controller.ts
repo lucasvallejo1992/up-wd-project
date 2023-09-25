@@ -1,11 +1,12 @@
-import express from 'express';
+import express, { Request, Response, Router } from 'express';
 import { ITEMS } from '../constants/items';
 import { ItemType } from '../types/item.type';
 import { CHARACTERS } from '../constants/characters';
+import { log } from 'logger';
 
 class OptionController {
   public path = '/options';
-  public router = express.Router();
+  public router = Router();
  
   constructor() {
     this.intializeRoutes();
@@ -16,17 +17,22 @@ class OptionController {
     this.router.get(`${this.path}/characters`, this.getCharacters);
   }
  
-  getItems = async (req: express.Request<{type?: ItemType}>, res: express.Response) => {
-    const { type } = req.query;
-
-    if (!type) {
-      return res.json(ITEMS);
+  getItems = async (req: Request<{type?: ItemType}>, res: Response) => {
+    try {
+      const { type } = req.query;
+  
+      if (!type) {
+        return res.json(ITEMS);
+      }
+  
+      return res.json(ITEMS.filter(item => item.type === type));
+    } catch (error: any) {
+      log(error);
+      return res.status(500).send({ message: 'SERVER_ERROR' });
     }
-
-    return res.json(ITEMS.filter(item => item.type === type));
   }
 
-  getCharacters = async (req: express.Request, res: express.Response) => {
+  getCharacters = async (req: Request, res: Response) => {
     return res.json(CHARACTERS);
   }
 }
