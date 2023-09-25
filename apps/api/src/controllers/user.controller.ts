@@ -2,7 +2,7 @@ import express from 'express';
 import { User } from '../models/user.model';
 
 class UserController {
-  public path = '/users';
+  public path = '/user';
   public router = express.Router();
  
   constructor() {
@@ -25,9 +25,9 @@ class UserController {
   }
  
   createUser = async (req: express.Request, res: express.Response) => {
-    const { name } = req.params;
+    const { name, pin } = req.body;
 
-    if (!name) {
+    if (!name || !pin) {
       return res.status(400).send({ message: 'BAD_REQUEST' });;
     }
 

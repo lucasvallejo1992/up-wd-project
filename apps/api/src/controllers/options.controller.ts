@@ -1,8 +1,9 @@
 import express from 'express';
 import { ITEMS } from '../constants/items';
 import { ItemType } from '../types/item.type';
+import { CHARACTERS } from '../constants/characters';
 
-class UsersController {
+class OptionController {
   public path = '/options';
   public router = express.Router();
  
@@ -12,7 +13,7 @@ class UsersController {
  
   public intializeRoutes() {
     this.router.get(`${this.path}/items`, this.getItems);
-    // this.router.post(`${this.path}/items`, this.createUser);
+    this.router.get(`${this.path}/characters`, this.getCharacters);
   }
  
   getItems = async (req: express.Request<{type?: ItemType}>, res: express.Response) => {
@@ -24,6 +25,10 @@ class UsersController {
 
     return res.json(ITEMS.filter(item => item.type === type));
   }
+
+  getCharacters = async (req: express.Request, res: express.Response) => {
+    return res.json(CHARACTERS);
+  }
 }
 
-export default UsersController;
+export default OptionController;

@@ -19,6 +19,7 @@ class App {
  
     this.initializeMiddlewares();
     this.initializeControllers(controllers);
+    this.handleNotFound();
   }
  
   private initializeMiddlewares() {
@@ -29,10 +30,18 @@ class App {
     this.app.use(cors())
     this.app.use(bodyParser.json());
   }
- 
+
   private initializeControllers(controllers: Controller[]) {
     controllers.forEach((controller: Controller) => {
       this.app.use('/', controller.router);
+    });
+  }
+
+  private handleNotFound() {
+    this.app.use((req, res, next) => {
+      res.status(404).json({
+          message: 'Ohh you are lost, read the API documentation to find your way back home'
+      });
     });
   }
  

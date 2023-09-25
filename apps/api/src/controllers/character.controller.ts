@@ -1,6 +1,7 @@
 import express from 'express';
 import { User } from '../models/user.model';
 import { Character } from '../types/character.type';
+import { Item } from '../types/item.type';
 
 class CharacterController {
   public path = '/characters';
@@ -44,10 +45,10 @@ class CharacterController {
     return res.json(character);
   }
  
-  createCharacter = async (req: express.Request<{character: Character}>, res: express.Response) => {
-    const { character } = req.body;
+  createCharacter = async (req: express.Request<{id: string}>, res: express.Response) => {
+    const { id } = req.body;
 
-    if (!character) {
+    if (!id) {
       return res.status(400).send({ message: 'BAD_REQUEST' });
     }
 
@@ -60,11 +61,11 @@ class CharacterController {
     return res.status(201).send({ message: 'CREATED' });
   }
 
-  updateCharacter = async (req: express.Request<{ id: string, character: Character }>, res: express.Response) => {
+  updateCharacter = async (req: express.Request<{ id: string, items: string[] }>, res: express.Response) => {
     const { id } = req.params;
-    const { character } = req.body;
+    const { items } = req.body;
 
-    if (!character) {
+    if (!items) {
       return res.status(400).send({ message: 'BAD_REQUEST' });;
     }
 
