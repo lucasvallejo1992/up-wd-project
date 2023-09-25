@@ -11,17 +11,6 @@ services:
       - 3000:3000
     networks:
       - app_network
-  api:
-    container_name: api
-    build:
-      context: .
-      dockerfile: ./apps/api/Dockerfile
-    restart: always
-    ports:
-      - 3001:3001
-    networks:
-      - app_network
-      - express-mongo
   mongo:
     restart: always
     ports:
@@ -33,6 +22,19 @@ services:
       - express-mongo
     expose:
       - 27017
+  api:
+    container_name: api
+    build:
+      context: .
+      dockerfile: ./apps/api/Dockerfile
+    restart: always
+    ports:
+      - 3001:3001
+    environment:
+      - MONGO_DB_CONNECTION_STRING=mongodb://mongo:27017/app
+    networks:
+      - app_network
+      - express-mongo
 
 # Define a network, which allows containers to communicate
 # with each other, by using their container name as a hostname
