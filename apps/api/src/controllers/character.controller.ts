@@ -3,6 +3,7 @@ import { User } from '../models/user.model';
 import { Character } from '../types/character.type';
 import { Item } from '../types/item.type';
 import { CHARACTERS } from '../constants/characters';
+import { ITEMS } from '../constants/items';
 
 class CharacterController {
   public path = '/characters';
@@ -78,7 +79,7 @@ class CharacterController {
     const { id } = req.params;
     const { items } = req.body;
 
-    if (!items) {
+    if (!items || items.length > 3) {
       return res.status(400).send({ message: 'BAD_REQUEST' });;
     }
 
@@ -88,13 +89,39 @@ class CharacterController {
       return res.status(404).send({ message: 'NOT_FOUND' });
     }
 
-    const existingCharacter: Character = existingUser.characters.filter(character => character.id === id)?.[0];
+    const existingCharacter: Character = existingUser.characters.find(character => character.id === id);
 
     if (!existingCharacter) {
       return res.status(404).send({ message: 'NOT_FOUND' });
     }
 
-    return res.status(200).send(existingCharacter);
+    const typeValidationObject = {
+      'upper_body': 0,
+      'lower_body': 0,
+      'boots': 0
+    }
+
+    const selectedItems: Item[] = items.map((item: string) => {
+      const selectedItem = ITEMS.find(option => option.id === item);
+
+      if (!selectedItem) {
+        return res.status(404).send({ message: `${item} NOT_FOUND` });
+      }
+
+      typeValidationObject[selectedItem.type] += 1;
+
+      if (typeValidationObject[selectedItem.type] > 1) {
+        return res.status(400).send({ message: `${item} DUPLICATED_TYPE` });
+      }
+
+      return selectedItem;
+    });
+
+    existingUser.characters = existingUser.characters.map(character => character.id === id ? ({...character, items: selectedItems}) : character);
+
+    existingUser.save();
+
+    return res.status(200).send(selectedItems);
   }
 }
 

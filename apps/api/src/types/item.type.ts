@@ -1,4 +1,4 @@
-export type ItemType = 'upper-body' | 'lower-body' | 'boots';
+export type ItemType = 'upper_body' | 'lower_body' | 'boots';
 
 export type Item = {
   id: string,
