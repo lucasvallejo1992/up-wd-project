@@ -4,6 +4,7 @@ import { User } from '../models/user.model';
 import { log } from 'logger';
 import { AuthMiddleware } from '../middlewares/auth.middleware';
 import { CONFIG } from '../config';
+import bcrypt from 'bcrypt';
 
 class UserController {
   public path = '/user';
@@ -44,7 +45,13 @@ class UserController {
   
       const existingUser = await User.findOne();
 
-      if (!existingUser || existingUser.pin !== pin) {
+      if (!existingUser) {
+        return res.status(404).send({ message: 'PIN_DONT_MATCH' });
+      }
+
+      const matches = await bcrypt.compare(pin, existingUser.pin || '');
+
+      if (!matches) {
         return res.status(404).send({ message: 'PIN_DONT_MATCH' });
       }
 
@@ -70,7 +77,8 @@ class UserController {
       const existingUser = await User.findOne();
   
       if (!existingUser) {
-        const user = new User({ name, pin });
+        const encriptedPin = await bcrypt.hash(pin, 10);
+        const user = new User({ name, pin: encriptedPin });
         await user.save();
         return res.status(201).send(user);
       }
