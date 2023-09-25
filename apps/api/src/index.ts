@@ -1,9 +1,17 @@
-import { createServer } from "./server";
-import { log } from "logger";
+import { CONFIG } from "./config";
+import { connectToMongoDB } from "./services/mongo";
+import App from "./app";
+import UserController from "./controllers/user.controller";
 
-const port = process.env.PORT || 3001;
-const server = createServer();
+const { SERVER_PORT } = CONFIG;
 
-server.listen(port, () => {
-  log(`api running on ${port}`);
-});
+connectToMongoDB().catch(error => console.log(error));
+
+const app = new App(
+  [
+    new UserController(),
+  ],
+  SERVER_PORT,
+);
+
+app.listen();
