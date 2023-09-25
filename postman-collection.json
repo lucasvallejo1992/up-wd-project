@@ -12,6 +12,16 @@
 				{
 					"name": "Get User",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2OTU2NzkwODAsImV4cCI6MTY5NTY5MzQ4MH0.N-ZeXaM3F_j9u37qIFVtPx5hpz2jJCEf95v6KcB89eQ",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -49,6 +59,34 @@
 							"port": "3001",
 							"path": [
 								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Authenticate User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"pin\": \"1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3001/user/authenticate",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"user",
+								"authenticate"
 							]
 						}
 					},
@@ -111,7 +149,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"items\": []\n}",
+							"raw": "{\n    \"items\": [\"upper-body-1\", \"lower-body-1\", \"boots-1\"]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
