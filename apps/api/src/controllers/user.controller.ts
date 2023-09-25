@@ -1,6 +1,9 @@
 import express, { Request, Response, Router } from 'express';
+import jwt from 'jsonwebtoken';
 import { User } from '../models/user.model';
 import { log } from 'logger';
+import { AuthMiddleware } from '../middlewares/auth.middleware';
+import { CONFIG } from '../config';
 
 class UserController {
   public path = '/user';
@@ -11,19 +14,45 @@ class UserController {
   }
  
   public intializeRoutes() {
-    this.router.get(this.path, this.getUser);
+    this.router.get(this.path, [AuthMiddleware.authenticate, this.getUser]);
+    this.router.post(`${this.path}/authenticate`, this.authenticate);
     this.router.post(this.path, this.createUser);
   }
  
   getUser = async (req: Request, res: Response) => {
     try {
-      const existingUser = await User.findOne();
-  
+      const existingUser = await User.findOne().select('-pin');
+
       if (!existingUser) {
         return res.status(404).send({ message: 'NOT_FOUND' });
       }
   
       return res.json(existingUser);
+    } catch (error: any) {
+      log(error);
+      return res.status(500).send({ message: 'SERVER_ERROR' });
+    }
+  }
+
+  authenticate = async (req: Request<{ pin: string }>, res: Response) => {
+    try {
+      const { pin } = req.body;
+
+      if (!pin) {
+        return res.status(400).send({ message: 'BAD_REQUEST' });
+      }
+  
+      const existingUser = await User.findOne();
+
+      if (!existingUser || existingUser.pin !== pin) {
+        return res.status(404).send({ message: 'PIN_DONT_MATCH' });
+      }
+
+      const token = jwt.sign({}, CONFIG.JWT_KEY, {
+        expiresIn: CONFIG.JWT_EXPIRATION_TIME
+      });
+  
+      return res.status(200).send({ token });
     } catch (error: any) {
       log(error);
       return res.status(500).send({ message: 'SERVER_ERROR' });
@@ -41,7 +70,7 @@ class UserController {
       const existingUser = await User.findOne();
   
       if (!existingUser) {
-        const user = new User({ name });
+        const user = new User({ name, pin });
         await user.save();
         return res.status(201).send(user);
       }

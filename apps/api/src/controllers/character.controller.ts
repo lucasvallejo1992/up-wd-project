@@ -5,6 +5,7 @@ import { Item } from '../types/item.type';
 import { CHARACTERS } from '../constants/characters';
 import { ITEMS } from '../constants/items';
 import { log } from 'console';
+import { AuthMiddleware } from '../middlewares/auth.middleware';
 
 class CharacterController {
   public path = '/characters';
@@ -15,10 +16,10 @@ class CharacterController {
   }
  
   public intializeRoutes() {
-    this.router.get(this.path, this.getCharacters);
-    this.router.get(`${this.path}/:id`, this.getCharacter);
-    this.router.post(this.path, this.createCharacter);
-    this.router.patch(`${this.path}/:id`, this.updateCharacter);
+    this.router.get(this.path, [AuthMiddleware.authenticate, this.getCharacters]);
+    this.router.get(`${this.path}/:id`, [AuthMiddleware.authenticate, this.getCharacter]);
+    this.router.post(this.path, [AuthMiddleware.authenticate, this.createCharacter]);
+    this.router.patch(`${this.path}/:id`, [AuthMiddleware.authenticate, this.updateCharacter]);
   }
  
   getCharacters = async (req: Request, res: Response) => {
@@ -91,7 +92,7 @@ class CharacterController {
     }
   }
 
-  updateCharacter = async (req: Request<{ id: string, items: string[] }>, res: Response) => {
+  updateCharacter = async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
       const { items } = req.body;
