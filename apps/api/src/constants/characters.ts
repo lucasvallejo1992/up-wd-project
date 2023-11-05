@@ -3,32 +3,32 @@ import { Character } from "../types/character.type";
 export const CHARACTERS: Character[] = [
   {
     id: '1',
-    name: 'Pedro',
-    description: 'Rouge',
+    name: 'Martin',
+    description: '',
     items: []
   },
   {
     id: '2',
-    name: 'Eliana',
-    description: 'Paladin',
+    name: 'David',
+    description: '',
     items: []
   },
   {
     id: '3',
-    name: 'Roger',
-    description: 'Sorcerer',
+    name: 'Nicolas',
+    description: '',
     items: []
   },
   {
     id: '4',
-    name: 'Nathan',
-    description: 'Archer',
+    name: 'Juan',
+    description: '',
     items: []
   },
   {
     id: '5',
-    name: 'Marjorie',
-    description: 'Priest',
+    name: 'Diego',
+    description: '',
     items: []
   }
 ];

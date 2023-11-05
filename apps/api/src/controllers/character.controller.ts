@@ -96,7 +96,7 @@ class CharacterController {
     try {
       const { id } = req.params;
       const { items } = req.body;
-  
+      console.log(items);
       if (!items || items.length > 3) {
         return res.status(400).send({ message: 'BAD_REQUEST' });;
       }
@@ -114,9 +114,9 @@ class CharacterController {
       }
   
       const typeValidationObject = {
-        'upper_body': 0,
-        'lower_body': 0,
-        'boots': 0
+        'shirt': 0,
+        'pants': 0,
+        'shoes': 0
       }
   
       const selectedItems: Item[] = items.map((item: string) => {

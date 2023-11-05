@@ -1,0 +1,33 @@
+.avatar-box {
+  position: relative;
+  width: 600px;
+  height: 600px;
+}
+
+.avatar-image {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+}
+
+.color-gradient {
+  border-radius: 18px;
+  width: 600px;
+  height: 600px;
+  background: linear-gradient(90deg, #f06, #09f, #f06); /* Initial gradient colors */
+  background-size: 300% 100%;
+  animation: undulate 10s linear infinite;
+}
+
+
+@keyframes undulate {
+  0% {
+    background-position: 0 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
