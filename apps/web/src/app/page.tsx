@@ -1,75 +1,83 @@
 "use client";
 
 import { Box, Button, Divider, Heading } from '@chakra-ui/react'
-import { Avatar } from '../components/Avatar';
-import { AvatarSelector } from '../components/AvatarSelector';
-import { useState } from 'react';
-import { useCreateOutfit } from '../hooks/useCreateOutfit';
-
-const API_HOST = process.env.NEXT_PUBLIC_API_HOST || "http://localhost:3001";
+import { useShowOutfits } from '../hooks/useShowOutfits';
+import { CharacterType } from '../types/Character';
+import { AvatarCard } from '../components/AvatarCard';
+import { useAuth } from '../hooks/useAuth';
 
 export default function Web() {
-  const [headNumber, setHeadNumber] = useState(1);
-  const [shirtNumber, setShirtNumber] = useState(1);
-  const [pantsNumber, setPantsNumber] = useState(1);
-  const [shoesNumber, setShoesNumber] = useState(1);
-
   const {
-    characters,
-    shirts,
-    pants,
-    shoes,
-    handleSelector,
-    handleCreate
-  } = useCreateOutfit();
+    outfits
+  } = useShowOutfits();
+  const { profile, handleLogOut } = useAuth();
+
+  const goToSignUpPage = () => {
+    window.location.href = "/signup";
+  }
+
+  const goToLogInPage = () => {
+    window.location.href = "/login";
+  }
+  const goToCreatenPage = () => {
+    window.location.href = "/create-outfit";
+  }
 
   return (
     <div>
-      <Box display="flex" alignItems="center" flexDirection="column" margin="4 0" gap="2">
-        <Heading as='h1' size='xl'>Crear outfit</Heading>
+      <Box display="flex" alignItems="center" flexDirection="column" marginBottom="4" gap="2">
+        <Heading as="h1" size="xl">Listado de outfits{profile?.name ? ` de ${profile.name}` : ''}</Heading>
+        <Divider maxWidth="600px" />
+        <Box display="flex" justifyContent="center" gap="2">
+          {
+            !profile?.name ? (
+              <>
+                <Button
+                  colorScheme='blue'
+                  isLoading={false}
+                  onClick={goToLogInPage}
+                >
+                  Ingresar
+                </Button>
+                <Button
+                  colorScheme='blue'
+                  isLoading={false}
+                  onClick={goToSignUpPage}
+                >
+                  Registrarse
+                </Button>
+              </>
+            ) : undefined
+          }
+          {
+            profile?.name ? (
+              <>
+                <Button
+                  colorScheme='blue'
+                  isLoading={false}
+                  onClick={goToCreatenPage}
+                >
+                  Crear o Editar Outfit
+                </Button>
+                <Button
+                  colorScheme='red'
+                  isLoading={false}
+                  onClick={() => handleLogOut()}
+                >
+                  Salir
+                </Button>
+              </>
+            ) : undefined
+          }
+        </Box>
         <Divider maxWidth="600px" />
       </Box>
-      <Box display="flex" justifyContent="center">
-        <Avatar
-          headSrc={`img/head${headNumber}.png`}
-          shirtSrc={`img/shirt${shirtNumber}.png`}
-          pantsSrc={`img/pants${pantsNumber}.png`}
-          shoesSrc={`img/shoes${shoesNumber}.png`}
-        />
-      </Box>
-      <Box display="flex" alignItems="center" flexDirection="column" marginTop="4" gap="2">
-        <Heading as='h2' size='lg'>{ characters[headNumber - 1]?.name }</Heading>
-        <Divider maxWidth="600px" />
-      </Box>
-      <AvatarSelector
-        label="Personaje"
-        onPrevious={() => setHeadNumber(prev => handleSelector(characters.length, prev, false))}
-        onNext={() => setHeadNumber(prev => handleSelector(characters.length, prev))}
-      />
-      <AvatarSelector
-        label="Remera"
-        onPrevious={() => setShirtNumber(prev => handleSelector(shirts.length, prev, false))}
-        onNext={() => setShirtNumber(prev => handleSelector(shirts.length, prev))}
-      />
-      <AvatarSelector
-        label="Pantalon"
-        onPrevious={() => setPantsNumber(prev => handleSelector(pants.length, prev, false))}
-        onNext={() => setPantsNumber(prev => handleSelector(pants.length, prev))}
-      />
-      <AvatarSelector
-        label="Zapatillas"
-        onPrevious={() => setShoesNumber(prev => handleSelector(shoes.length, prev, false))}
-        onNext={() => setShoesNumber(prev => handleSelector(shoes.length, prev))}
-      />
-      <Box display="flex" alignItems="center" flexDirection="column" gap="4">
-        <Divider maxWidth="600px" />
-        <Button
-          colorScheme='blue'
-          disabled={!characters.length}
-          onClick={() => handleCreate(characters[headNumber - 1].id, [shirts[shirtNumber - 1].id, pants[pantsNumber - 1].id, shoes[shoesNumber - 1].id])}
-        >
-          Crear outfit
-        </Button>
+      <Box display="flex" gap="4" justifyContent="center">
+        {
+          outfits?.length ? outfits.map((character: CharacterType) => (
+            <AvatarCard key={character.id} character={character} />
+          )) : undefined
+        }
       </Box>
     </div>
   );

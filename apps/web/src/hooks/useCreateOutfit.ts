@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { API_HOST } from "../config/general.config";
 
 export const useCreateOutfit = () => {
   const [characters, setCharacters] = useState<any>([]);
@@ -8,7 +9,7 @@ export const useCreateOutfit = () => {
 
   const getCharacters = async () => {
     try {
-      const response: any = await fetch('http://127.0.0.1:3001/options/characters');
+      const response: any = await fetch(`${API_HOST}/options/characters`);
       setCharacters(await response.json());
     } catch (error) {
       console.error(error);
@@ -17,7 +18,7 @@ export const useCreateOutfit = () => {
 
   const getShirts = async () => {
     try {
-      const response: any = await fetch('http://127.0.0.1:3001/options/items?type=shirt');
+      const response: any = await fetch(`${API_HOST}/options/items?type=shirt`);
       setShirts(await response.json());
     } catch (error) {
       console.error(error);
@@ -25,7 +26,7 @@ export const useCreateOutfit = () => {
   }
   const getPants = async () => {
     try {
-      const response: any = await fetch('http://127.0.0.1:3001/options/items?type=pants');
+      const response: any = await fetch(`${API_HOST}/options/items?type=pants`);
       setPants(await response.json());
     } catch (error) {
       console.error(error);
@@ -33,7 +34,7 @@ export const useCreateOutfit = () => {
   }
   const getShoes = async () => {
     try {
-      const response: any = await fetch('http://127.0.0.1:3001/options/items?type=shoes');
+      const response: any = await fetch(`${API_HOST}/options/items?type=shoes`);
       setShoes(await response.json());
     } catch (error) {
       console.error(error);
@@ -56,24 +57,26 @@ export const useCreateOutfit = () => {
 
   const handleCreate = async (id: string, items: string[]) => {
     try {
-      const response: any = await fetch('http://127.0.0.1:3001/characters', {
+      const token = localStorage.getItem('token') || '';
+      const response: any = await fetch(`${API_HOST}/characters`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2OTkyMjQxNjgsImV4cCI6MTY5OTIzODU2OH0.LDw_COpcpWMqfDlVpFLNrAova90VCfGA40xDSBbzz4E'
+          'Authorization': token
         },
         body: JSON.stringify({
           "id": id
         })
       });
-      const itemsResponse: any = await fetch(`http://127.0.0.1:3001/characters/${id}`, {
+      const itemsResponse: any = await fetch(`${API_HOST}/characters/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2OTkyMjQxNjgsImV4cCI6MTY5OTIzODU2OH0.LDw_COpcpWMqfDlVpFLNrAova90VCfGA40xDSBbzz4E'
+          'Authorization': token
         },
         body: JSON.stringify({"items": items})
       });
+      window.location.href = '/';
     } catch (error) {
       console.error(error);
     }

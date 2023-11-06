@@ -16,7 +16,7 @@ class CharacterController {
   }
  
   public intializeRoutes() {
-    this.router.get(this.path, [AuthMiddleware.authenticate, this.getCharacters]);
+    this.router.get(this.path, [this.getCharacters]);
     this.router.get(`${this.path}/:id`, [AuthMiddleware.authenticate, this.getCharacter]);
     this.router.post(this.path, [AuthMiddleware.authenticate, this.createCharacter]);
     this.router.patch(`${this.path}/:id`, [AuthMiddleware.authenticate, this.updateCharacter]);
